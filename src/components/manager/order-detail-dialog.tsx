@@ -25,7 +25,7 @@ import {Button} from '@/components/ui/button'
 import {toast} from 'react-toastify'
 import orderApi from '@/lib/api/order.api'
 import {useEffect, useState} from 'react'
-import {Order} from '@/lib/types/order.type'
+import {Order, ORDER_STATUS} from '@/lib/types/order.type'
 
 interface OrderDetailsDialogProps {
   isOpen: boolean
@@ -69,9 +69,19 @@ export default function OrderDetailsDialog(
         </DialogTitle>
         {order && (
           <>
-            <DialogDescription className="text-gray-500 mb-4">
-              Mã đơn: {order.id} | Tên người dùng: {order.userName} | Tổng tiền:{' '}
-              {order.total.toLocaleString('vi-VN')} VNĐ
+            <DialogDescription className="text-gray-500">
+              <div className="flex flex-col gap-2 text-sm sm:text-base">
+                <div>
+                  <span className="font-medium text-gray-900">Mã đơn:</span> {order.id}
+                </div>
+                <div>
+                  <span className="font-medium text-gray-900">Tên người dùng:</span> {order.userName}
+                </div>
+                <div>
+                  <span className="font-medium text-gray-900">Tổng tiền:</span>{' '}
+                  {order.total.toLocaleString('vi-VN')} VNĐ
+                </div>
+              </div>
             </DialogDescription>
 
             {/* STATUS CONTROL */}
@@ -86,21 +96,9 @@ export default function OrderDetailsDialog(
                     <SelectValue placeholder="Chọn trạng thái"/>
                   </SelectTrigger>
                   <SelectContent className="bg-white border-gray-200 text-gray-900">
-                    <SelectItem value="PENDING" className="hover:bg-gray-100">
-                      Đang chờ
-                    </SelectItem>
-                    <SelectItem value="SHIPPING" className="hover:bg-gray-100">
-                      Đang gửi
-                    </SelectItem>
-                    <SelectItem value="DELIVERED" className="hover:bg-gray-100">
-                      Đã giao
-                    </SelectItem>
-                    <SelectItem value="Delivered" className="hover:bg-gray-100">
-                      Đã nhận
-                    </SelectItem>
-                    <SelectItem value="CANCELLED" className="hover:bg-gray-100">
-                      Đã hủy
-                    </SelectItem>
+                    {Object.entries(ORDER_STATUS).map(([key, label]) => (
+                      <SelectItem key={key} value={key}>{label}</SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
                 <Button

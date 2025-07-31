@@ -29,7 +29,7 @@ const categoryApi = {
   },
 
   async deleteCategory(id: string) {
-    return await axiosInstance.delete(`${categoryUrl}?id=${id}`);
+    return await axiosInstance.delete(`${categoryUrl}/${id}`);
   }
 }
 

@@ -12,8 +12,9 @@ import { toast } from 'react-toastify'
 import { format } from 'date-fns'
 import { vi } from 'date-fns/locale'
 import orderApi from '@/lib/api/order.api'
-import {Order} from "@/lib/types/order.type";
+import {Order, ORDER_STATUS} from "@/lib/types/order.type";
 import OrderDetailsDialog from "@/components/manager/order-detail-dialog";
+import Pagination from "@/components/ui/pagination";
 
 export default function OrderManager() {
   const [orders, setOrders] = useState<Order[]>([])
@@ -52,9 +53,8 @@ export default function OrderManager() {
       setHasNextPage(data.hasNextPage)
       setHasPreviousPage(data.hasPreviousPage)
     } catch (error) {
+      console.log("Loading order", error)
       setError('Đã xảy ra lỗi khi tải đơn hàng')
-      console.error(error)
-      toast.error('Đã xảy ra lỗi khi tải đơn hàng')
     } finally {
       setLoading(false)
     }
@@ -70,23 +70,14 @@ export default function OrderManager() {
   }
 
   const handleStatusUpdate = () => {
-    fetchOrders()
+    fetchOrders().then(() => {})
   }
-
-  // Client-side filtering for instant feedback
-  const filteredOrders: Order[] = orders.filter(
-    (order) =>
-      (!searchTerm ||
-        order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        order.userName.toLowerCase().includes(searchTerm.toLowerCase())) &&
-      (!statusFilter || order.status === statusFilter)
-  )
 
   return (
     <div className="bg-white border-gray-200 shadow-sm rounded-2xl p-6 h-full flex flex-col">
       <h2 className="text-2xl font-semibold text-gray-900 mb-4">Danh sách đơn hàng</h2>
       <div className="w-full mb-4">
-        <div className="flex flex-col lg:flex-row items-center gap-4 w-full">
+        <div className="flex flex-wrap lg:flex-nowrap lg:flex-row items-center justify-center gap-4 w-full">
           <Input
             placeholder="Tìm kiếm theo mã đơn hoặc tên người dùng..."
             value={searchTerm}
@@ -99,17 +90,25 @@ export default function OrderManager() {
             onValueChange={(value) => setStatusFilter(value === 'all' ? undefined : value)}
           >
             <SelectTrigger
-              className="bg-white border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500 min-w-[150px]">
+              className="bg-white border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500 max-w-52">
               <SelectValue placeholder="Trạng thái"/>
             </SelectTrigger>
             <SelectContent className="bg-white border-gray-200 text-gray-900">
               <SelectItem value="all">Tất cả trạng thái</SelectItem>
-              <SelectItem value="PENDING">Đang chờ</SelectItem>
-              <SelectItem value="CONFIRMED">Đã xác nhận</SelectItem>
-              <SelectItem value="PROCESSING">Đang xử lý</SelectItem>
-              <SelectItem value="SHIPPED">Đã giao</SelectItem>
-              <SelectItem value="DELIVERED">Đã nhận</SelectItem>
-              <SelectItem value="CANCELLED">Đã hủy</SelectItem>
+              {Object.entries(ORDER_STATUS).map(([key, label]) => (
+                <SelectItem key={key} value={key}>{label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select value={sortBy} onValueChange={setSortBy}>
+            <SelectTrigger
+              className="bg-white border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500 max-w-52">
+              <SelectValue placeholder="Sắp xếp theo"/>
+            </SelectTrigger>
+            <SelectContent className="bg-white border-gray-200 text-gray-900">
+              <SelectItem value="CreatedAt">Ngày tạo</SelectItem>
+              <SelectItem value="Total">Tổng tiền</SelectItem>
             </SelectContent>
           </Select>
 
@@ -153,17 +152,6 @@ export default function OrderManager() {
             </PopoverContent>
           </Popover>
 
-          <Select value={sortBy} onValueChange={setSortBy}>
-            <SelectTrigger
-              className="bg-white border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500 min-w-[140px]">
-              <SelectValue placeholder="Sắp xếp theo"/>
-            </SelectTrigger>
-            <SelectContent className="bg-white border-gray-200 text-gray-900">
-              <SelectItem value="CreatedAt">Ngày tạo</SelectItem>
-              <SelectItem value="Total">Tổng tiền</SelectItem>
-            </SelectContent>
-          </Select>
-
           <Button
             variant="outline"
             className="border-gray-300 text-gray-900 hover:bg-gray-100 min-w-[110px] flex items-center justify-center"
@@ -177,10 +165,10 @@ export default function OrderManager() {
 
       {loading && <p className="text-center text-gray-500">Đang tải...</p>}
       {error && <p className="text-center text-red-500">{error}</p>}
-      {!loading && !error && filteredOrders.length === 0 && (
+      {!loading && !error && orders.length === 0 && (
         <p className="text-center text-gray-500">Không có đơn hàng nào</p>
       )}
-      {!loading && !error && filteredOrders.length > 0 && (
+      {!loading && !error && orders.length > 0 && (
         <>
           <div className={"flex-1"}>
             <Table>
@@ -195,11 +183,11 @@ export default function OrderManager() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredOrders.map((order) => (
+                {orders.map((order) => (
                   <TableRow key={order.id}>
                     <TableCell className="text-gray-900">{order.id}</TableCell>
                     <TableCell className="text-gray-500">{order.userName}</TableCell>
-                    <TableCell className="text-gray-500">{order.status}</TableCell>
+                    <TableCell className="text-gray-500">{ORDER_STATUS[order.status]}</TableCell>
                     <TableCell className="text-gray-900">{order.total.toLocaleString('vi-VN')} VNĐ</TableCell>
                     <TableCell className="text-gray-500">
                       {new Date(order.createdAt).toLocaleDateString('vi-VN')}
@@ -219,27 +207,7 @@ export default function OrderManager() {
               </TableBody>
             </Table>
           </div>
-          <div className="flex mt-4 w-full items-center justify-center gap-6">
-            <Button
-              variant="outline"
-              className="border-gray-300 text-gray-900 hover:bg-gray-100"
-              disabled={!hasPreviousPage}
-              onClick={() => setPageNumber(pageNumber - 1)}
-            >
-              Trang trước
-            </Button>
-            <span className="text-gray-900">
-              Trang {pageNumber} / {totalPages}
-            </span>
-            <Button
-              variant="outline"
-              className="border-gray-300 text-gray-900 hover:bg-gray-100"
-              disabled={!hasNextPage}
-              onClick={() => setPageNumber(pageNumber + 1)}
-            >
-              Trang sau
-            </Button>
-          </div>
+          <Pagination pageNumber={pageNumber} totalPages={totalPages} setPageNumber={setPageNumber}/>
         </>
       )}
       <OrderDetailsDialog

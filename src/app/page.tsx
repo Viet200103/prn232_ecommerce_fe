@@ -7,7 +7,7 @@ import categoryApi from "@/lib/api/category.api"
 import SearchFilter from "@/components/home/product-search-filter"
 import HomeHeader from "@/components/home/home-header"
 import ProductList from "@/components/home/product-list"
-import ProductPagination from "@/components/home/product-pagination"
+import Pagination from "@/components/ui/pagination"
 import { Product, ProductCategory } from "@/lib/types/product.type"
 
 export default function HomePage() {
@@ -77,7 +77,7 @@ export default function HomePage() {
         </div>
 
         {totalPages > 1 && (
-          <ProductPagination
+          <Pagination
             pageNumber={pageNumber}
             totalPages={totalPages}
             setPageNumber={setPageNumber}

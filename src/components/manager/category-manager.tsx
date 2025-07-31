@@ -7,7 +7,7 @@ import {Pencil, Trash2} from 'lucide-react'
 import categoryApi from "@/lib/api/category.api";
 import CategoryForm from "@/components/manager/category-form";
 import {toast} from "react-toastify";
-import ProductPagination from "@/components/home/product-pagination";
+import Pagination from "@/components/ui/pagination";
 
 interface ProductCategory {
   id: string
@@ -92,21 +92,22 @@ export default function CategoryManager() {
             {!loading && !error && categories.length === 0 && (
               <p className="text-center text-gray-500">Không có danh mục nào</p>
             )}
+
             { !loading && !error && categories.length > 0 && (
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-1/4">Tên</TableHead>
                     <TableHead className="w-2/3">Mô tả</TableHead>
-                    <TableHead className="w-[120px] text-center">Hành động</TableHead>
+                    <TableHead className="min-w-96 text-center">Hành động</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {categories.map((category) => (
                     <TableRow key={category.id}>
-                      <TableCell className="text-gray-900 w-1/4">{category.name}</TableCell>
-                      <TableCell className="text-gray-600 w-2/3">{category.desc}</TableCell>
-                      <TableCell className="w-32 text-center">
+                      <TableCell className="text-gray-900 ">{category.name}</TableCell>
+                      <TableCell className="text-gray-600 ">{category.desc}</TableCell>
+                      <TableCell className="text-center">
                         <Button
                           variant="outline"
                           size="sm"
@@ -138,7 +139,7 @@ export default function CategoryManager() {
       )}
 
       {totalPages > 1 && (
-        <ProductPagination
+        <Pagination
           pageNumber={pageNumber}
           totalPages={totalPages}
           setPageNumber={setPageNumber}

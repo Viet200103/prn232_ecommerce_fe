@@ -8,9 +8,9 @@ interface PaginationProps {
   setPageNumber: (page: number) => void
 }
 
-export default function ProductPagination({ pageNumber, totalPages, setPageNumber }: PaginationProps) {
+export default function Pagination({ pageNumber, totalPages, setPageNumber }: PaginationProps) {
   return (
-    <div className="flex justify-center gap-2 mt-8">
+    <div className="flex justify-center items-center gap-2 mt-8">
       <Button
         onClick={() => setPageNumber(Math.max(pageNumber - 1, 1))}
         disabled={pageNumber === 1}

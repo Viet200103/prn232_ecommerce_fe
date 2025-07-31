@@ -19,3 +19,12 @@ export interface OrderResponse {
   hasNextPage: boolean
   hasPreviousPage: boolean
 }
+
+export const ORDER_STATUS: Record<string, string>= {
+  "PENDING": 'Đang chờ',
+  "CONFIRMED": 'Đã xác nhận',
+  "PROCESSING": 'Đang xử lý',
+  "SHIPPED": 'Đã giao',
+  "DELIVERED": 'Đã nhận',
+  "CANCELLED": 'Đã hủy',
+}

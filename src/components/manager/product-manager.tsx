@@ -11,7 +11,7 @@ import {Product} from '@/lib/types/product.type'
 import productApi from '@/lib/api/product.api'
 import categoryApi from '@/lib/api/category.api'
 import ProductForm from '@/components/manager/product-form'
-import ProductPagination from "@/components/home/product-pagination";
+import Pagination from "@/components/ui/pagination";
 
 interface ProductCategory {
   id: string
@@ -183,7 +183,7 @@ export default function ProductManager() {
       </div>
 
       {totalPages > 1 && (
-        <ProductPagination
+        <Pagination
           pageNumber={pageNumber}
           totalPages={totalPages}
           setPageNumber={setPageNumber}
