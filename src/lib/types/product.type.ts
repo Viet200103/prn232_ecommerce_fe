@@ -22,8 +22,8 @@ export interface ProductCategory  {
   modifiedAt: string | null;
 };
 
-export interface ProductPageResponse {
-  items: Product[];
+export interface PageResultResponse<T> {
+  items: T[];
   totalPages: number;
   pages: number;
 }

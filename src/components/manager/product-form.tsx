@@ -53,9 +53,13 @@ export default function ProductForm({ isOpen, onClose, onSave, product }: Produc
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await categoryApi.getCategories()
-        setCategories(response || [])
+        const response = await categoryApi.getCategories({
+          pageNumber: 1,
+          pageSize: 100
+        })
+        setCategories(response.items || [])
       } catch (err) {
+        console.log("Load category", err)
         setError('Đã xảy ra lỗi khi tải danh mục')
       }
     }
@@ -72,6 +76,7 @@ export default function ProductForm({ isOpen, onClose, onSave, product }: Produc
       } else {
         // Create product
         await productApi.createProduct(data)
+        form.reset();
         toast.success('Lưu sản phẩm thành công')
       }
       onSave()

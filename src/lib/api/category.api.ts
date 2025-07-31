@@ -1,12 +1,23 @@
-import {CreateCategoryModel, ProductCategory} from "@/lib/types/product.type";
+import {CreateCategoryModel, PageResultResponse, ProductCategory} from "@/lib/types/product.type";
 import axiosInstance from "@/lib/api/axios-client";
 
 const categoryUrl = "/categories"
 
 const categoryApi = {
-  async getCategories(searchName?: string): Promise<ProductCategory[]>{
-    const searchParams = new URLSearchParams(searchName);
-    return await axiosInstance.get<ProductCategory[]>(`${categoryUrl}/${searchParams.toString()}`);
+
+  async getCategories(params?: {
+    searchName?: string,
+    pageNumber?: number,
+    pageSize?: number,
+  }): Promise<PageResultResponse<ProductCategory>> {
+    const searchParams = new URLSearchParams();
+
+    if (params?.searchName) searchParams.append("searchName", params.searchName);
+
+    searchParams.append("pageSize", (params?.pageSize ?? 10).toString());
+    searchParams.append("pageNumber", (params?.pageNumber ?? 1).toString());
+
+    return await axiosInstance.get<PageResultResponse<ProductCategory>>(`${categoryUrl}?${searchParams.toString()}`);
   },
 
   async createCategory(data: CreateCategoryModel) {

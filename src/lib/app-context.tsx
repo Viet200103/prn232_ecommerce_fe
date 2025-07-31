@@ -28,6 +28,7 @@ export const AppProvider = ({ children } : { children: ReactNode }) => {
     localStorage.removeItem(ACCESS_TOKEN)
     setIsAuthenticated(false);
     setCurrentUser(null)
+    console.log("aaaaaaaaaaaaaaaaaaaaaaa")
   }
 
   const loadUser = (token: string | null) => {

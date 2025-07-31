@@ -54,9 +54,13 @@ export default function ProductManager() {
 
   const fetchCategories = async () => {
     try {
-      const data = await categoryApi.getCategories()
-      setCategories(data || [])
-    } catch (err) {
+      const data = await categoryApi.getCategories({
+        pageNumber: 1,
+        pageSize: 100
+      })
+      setCategories(data.items || [])
+    } catch (error) {
+      console.log("GetCategory", error)
     }
   }
 
@@ -103,7 +107,7 @@ export default function ProductManager() {
             <SelectTrigger className="bg-white border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500">
               <SelectValue placeholder="Chọn danh mục"/>
             </SelectTrigger>
-            <SelectContent className="bg-white border-gray-200 text-gray-900">
+            <SelectContent className="bg-white border-gray-200 text-gray-900 max-h-96">
               <SelectItem value="all" className="hover:bg-gray-100">Tất cả danh mục</SelectItem>
               {categories.map((category) => (
                 <SelectItem key={category.id} value={category.id} className="hover:bg-gray-100">
@@ -124,55 +128,59 @@ export default function ProductManager() {
       {loading && <p className="text-center text-gray-500">Đang tải...</p>}
       {error && <p className="text-center text-red-500">{error}</p>}
 
-      {!loading && !error && products.length > 0 && (
-        <div className="flex-1 max-h-[60vh] overflow-y-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Tên</TableHead>
-                <TableHead>Danh mục</TableHead>
-                <TableHead>SKU</TableHead>
-                <TableHead>Số lượng</TableHead>
-                <TableHead>Giá</TableHead>
-                <TableHead>Hành động</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody className={"overflow-y-auto"}>
-              {products.map((product) => (
-                <TableRow key={product.id}>
-                  <TableCell className="text-gray-900">{product.name}</TableCell>
-                  <TableCell className="text-gray-500">{product.categoryName}</TableCell>
-                  <TableCell className="text-gray-500">{product.sku}</TableCell>
-                  <TableCell className="text-gray-500">{product.quantity}</TableCell>
-                  <TableCell className="text-gray-900">{product.price.toLocaleString('vi-VN')} VNĐ</TableCell>
-                  <TableCell>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="mr-2 border-blue-500 text-blue-500 hover:bg-blue-50"
-                      onClick={() => {
-                        setEditingProduct(product)
-                        setIsDialogOpen(true)
-                      }}
-                    >
-                      <Pencil className="h-4 w-4"/>
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="border-red-500 text-red-500 hover:bg-red-50"
-                      onClick={() => handleDelete(product.id)}
-                    >
-                      <Trash2 className="h-4 w-4"/>
-                    </Button>
-                  </TableCell>
+      <div className="flex-1 overflow-hidden">
+        <div className="overflow-y-auto max-h-[60vh]">
+          {!loading && !error && products.length === 0 && (
+            <p className="text-center text-gray-500">Không có sản phẩm nào</p>
+          )}
+          {!loading && !error && products.length > 0 && (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Tên</TableHead>
+                  <TableHead>Danh mục</TableHead>
+                  <TableHead>SKU</TableHead>
+                  <TableHead>Số lượng</TableHead>
+                  <TableHead>Giá</TableHead>
+                  <TableHead>Hành động</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {products.map((product) => (
+                  <TableRow key={product.id}>
+                    <TableCell className="text-gray-900">{product.name}</TableCell>
+                    <TableCell className="text-gray-500">{product.categoryName}</TableCell>
+                    <TableCell className="text-gray-500">{product.sku}</TableCell>
+                    <TableCell className="text-gray-500">{product.quantity}</TableCell>
+                    <TableCell className="text-gray-900">{product.price.toLocaleString('vi-VN')} VNĐ</TableCell>
+                    <TableCell>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="mr-2 border-blue-500 text-blue-500 hover:bg-blue-50"
+                        onClick={() => {
+                          setEditingProduct(product)
+                          setIsDialogOpen(true)
+                        }}
+                      >
+                        <Pencil className="h-4 w-4"/>
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="border-red-500 text-red-500 hover:bg-red-50"
+                        onClick={() => handleDelete(product.id)}
+                      >
+                        <Trash2 className="h-4 w-4"/>
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </div>
-
-      )}
+      </div>
 
       {totalPages > 1 && (
         <ProductPagination
@@ -180,10 +188,6 @@ export default function ProductManager() {
           totalPages={totalPages}
           setPageNumber={setPageNumber}
         />
-      )}
-
-      {!loading && !error && products.length === 0 && (
-        <p className="text-center text-gray-500">Không có sản phẩm nào</p>
       )}
 
       <ProductForm

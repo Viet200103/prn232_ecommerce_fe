@@ -2,11 +2,15 @@
 
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
-import {usePathname} from "next/navigation";
+import {usePathname, useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
+import {useAppContext} from "@/lib/app-context";
 
 
 export default function ManagerSidebar() {
+  const appContext = useAppContext();
+  const router = useRouter();
+
   const pathname = usePathname()
 
   const navItems = [
@@ -32,7 +36,10 @@ export default function ManagerSidebar() {
         ))}
       </nav>
 
-      <Button variant={"outline"} className={"w-full"}>
+      <Button variant={"outline"} className={"w-full"} onClick={() => {
+        appContext.logout()
+        router.push("/login")
+      }}>
         Đăng Xuất
       </Button>
     </aside>

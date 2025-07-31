@@ -1,5 +1,5 @@
 import axiosInstance from "@/lib/api/axios-client";
-import {ProductFormValues, ProductPageResponse} from "@/lib/types/product.type";
+import {ProductFormValues, PageResultResponse, Product} from "@/lib/types/product.type";
 
 const productUrl = "/products"
 
@@ -13,7 +13,7 @@ const productApi = {
       pageNumber: number;
       pageSize: number;
     }
-  ): Promise<ProductPageResponse> {
+  ): Promise<PageResultResponse<Product>> {
 
     const searchParams = new URLSearchParams();
 
@@ -24,7 +24,7 @@ const productApi = {
     searchParams.append("pageNumber", params.pageNumber.toString());
     searchParams.append("pageSize", params.pageSize.toString());
 
-    return await axiosInstance.get<ProductPageResponse>(`${productUrl}/?${searchParams}`, )
+    return await axiosInstance.get<PageResultResponse<Product>>(`${productUrl}/?${searchParams}`, )
   },
 
   async createProduct(data: ProductFormValues) {
