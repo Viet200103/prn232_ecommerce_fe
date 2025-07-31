@@ -11,6 +11,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { login } from "@/lib/actions/auth.action";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import {ACCESS_TOKEN} from "@/lib/contants";
 
 const loginSchema = z.object({
   email: z.email({ message: "Địa chỉ email không hợp lệ" }).trim(),
@@ -36,7 +37,7 @@ export default function LoginPage() {
     login(data.email, data.password)
       .then((result) => {
         if (result.token) {
-          localStorage.setItem('accessToken', result.token);
+          localStorage.setItem(ACCESS_TOKEN, result.token);
         }
         router.push("/");
       })

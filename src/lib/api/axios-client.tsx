@@ -4,11 +4,11 @@ import axios, {
   AxiosResponse,
   AxiosInstance as AxiosType, AxiosError,
 } from "axios";
+import {ACCESS_TOKEN} from "@/lib/contants";
 
 type RequestConfig = AxiosRequestConfig;
 
 class AxiosInstance {
-
   api: AxiosType;
 
   constructor() {
@@ -20,7 +20,7 @@ class AxiosInstance {
     this.api.interceptors.request.use(
       (config) => {
         const token = typeof window !== "undefined"
-          ? localStorage.getItem("accessToken")
+          ? localStorage.getItem(ACCESS_TOKEN)
           : null;
 
         if (token && config.headers) {
@@ -33,27 +33,27 @@ class AxiosInstance {
     );
   }
 
-  async get<T = any>(url: string, config?: RequestConfig): Promise<T> {
+  async get<T = unknown>(url: string, config?: RequestConfig): Promise<T> {
     const res = await this.api.get<T>(url, config);
     return res.data;
   }
 
-  async post<T = any>(url: string, data?: any, config?: RequestConfig): Promise<T> {
+  async post<T = unknown>(url: string, data?: unknown, config?: RequestConfig): Promise<T> {
     const res = await this.api.post<T>(url, data, config);
     return res.data;
   }
 
-  async put<T = any>(url: string, data?: any, config?: RequestConfig): Promise<T> {
+  async put<T = unknown>(url: string, data?: unknown, config?: RequestConfig): Promise<T> {
     const res = await this.api.put<T>(url, data, config);
     return res.data;
   }
 
-  async patch<T = any>(url: string, data?: any, config?: RequestConfig): Promise<T> {
+  async patch<T = unknown>(url: string, data?: unknown, config?: RequestConfig): Promise<T> {
     const res = await this.api.patch<T>(url, data, config);
     return res.data;
   }
 
-  async delete<T = any>(url: string, config?: RequestConfig): Promise<T> {
+  async delete<T = unknown>(url: string, config?: RequestConfig): Promise<T> {
     const res = await this.api.delete<T>(url, config);
     return res.data;
   }

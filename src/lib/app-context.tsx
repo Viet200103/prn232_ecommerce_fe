@@ -1,6 +1,7 @@
 'use client'
 
 import {createContext, ReactNode, useContext, useEffect, useState} from "react";
+import {ACCESS_TOKEN} from "@/lib/contants";
 
 interface AppContextType {
   isAuthenticated: boolean;
@@ -18,12 +19,12 @@ export const AppProvider = ({ children } : { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   const logout = async () => {
-    localStorage.removeItem('accessToken')
+    localStorage.removeItem(ACCESS_TOKEN)
     setIsAuthenticated(false);
   }
 
   useEffect(() => {
-    const token = localStorage.getItem('accessToken')
+    const token = localStorage.getItem(ACCESS_TOKEN)
     setIsAuthenticated(!!token)
   }, []);
 

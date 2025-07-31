@@ -1,5 +1,8 @@
 'use server'
 
+import {cookies} from "next/headers";
+import {ACCESS_TOKEN} from "@/lib/contants";
+
 export async function login(email: string, password: string): Promise<LoginResponse> {
 
   const baseUrl = process.env.NEXT_PUBLIC_SSHOP_BASE_URL;
@@ -22,7 +25,12 @@ export async function login(email: string, password: string): Promise<LoginRespo
     throw new Error(error.message || 'Login failed')
   }
 
-  return await response.json()
+  const result: LoginResponse = await response.json()
+
+  const cookieStore = await cookies();
+  cookieStore.set(ACCESS_TOKEN, result.token)
+
+  return result
 
 }
 
