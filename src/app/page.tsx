@@ -15,6 +15,7 @@ export default function HomePage() {
   const [categories, setCategories] = useState<ProductCategory[]>([])
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('all')
+  const [sortBy, setSortBy] = useState<string>('newest')
   const [pageNumber, setPageNumber] = useState(1)
   const [pageSize] = useState(6)
   const [totalPages, setTotalPages] = useState(1)
@@ -45,12 +46,15 @@ export default function HomePage() {
         const productResponse = await productApi.getProducts({
           searchName: searchTerm,
           categoryId: selectedCategory === 'all' ? undefined : selectedCategory,
+          sortBy: sortBy,
           pageNumber,
           pageSize,
         })
 
         setProducts(productResponse.items)
         setTotalPages(productResponse.totalPages || 1)
+
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (err) {
         setError('Đã xảy ra lỗi khi tải sản phẩm')
       } finally {
@@ -58,8 +62,10 @@ export default function HomePage() {
       }
     }
 
-    fetchProducts()
-  }, [searchTerm, selectedCategory, pageNumber, pageSize])
+    fetchProducts().then(() => {
+      // do more
+    })
+  }, [searchTerm, selectedCategory, sortBy, pageNumber, pageSize])
 
   return (
     <div className="min-h-screen bg-gray-100 text-gray-900 px-4 py-8 flex flex-col">
@@ -71,6 +77,8 @@ export default function HomePage() {
           setSearchTerm={setSearchTerm}
           selectedCategory={selectedCategory}
           setSelectedCategory={setSelectedCategory}
+          sortBy={sortBy}
+          setSortBy={setSortBy}
           categories={categories}
         />
 

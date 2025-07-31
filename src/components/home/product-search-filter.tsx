@@ -9,7 +9,9 @@ interface SearchFilterProps {
   setSearchTerm: (value: string) => void
   selectedCategory: string
   setSelectedCategory: (value: string) => void
-  categories: ProductCategory[]
+  categories: ProductCategory[],
+  sortBy: string
+  setSortBy: (value: string) => void
 }
 
 export default function SearchFilter(
@@ -19,6 +21,8 @@ export default function SearchFilter(
     selectedCategory,
     setSelectedCategory,
     categories,
+    sortBy,
+    setSortBy,
   }: SearchFilterProps
 ) {
   return (
@@ -40,6 +44,17 @@ export default function SearchFilter(
               {category.name}
             </SelectItem>
           ))}
+        </SelectContent>
+      </Select>
+      <Select value={sortBy} onValueChange={setSortBy}>
+        <SelectTrigger className="bg-white border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500">
+          <SelectValue placeholder="Sắp xếp theo"/>
+        </SelectTrigger>
+        <SelectContent className="bg-white border-gray-300 text-gray-900">
+          <SelectItem value="newest" className="hover:bg-gray-100">Mới nhất</SelectItem>
+          <SelectItem value="oldest" className="hover:bg-gray-100">Cũ nhất</SelectItem>
+          <SelectItem value="price_asc" className="hover:bg-gray-100">Giá thấp đến cao</SelectItem>
+          <SelectItem value="price_desc" className="hover:bg-gray-100">Giá cao đến thấp</SelectItem>
         </SelectContent>
       </Select>
     </div>
