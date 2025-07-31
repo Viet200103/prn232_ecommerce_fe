@@ -85,32 +85,41 @@ export default function OrderManager() {
   return (
     <div className="bg-white border-gray-200 shadow-sm rounded-2xl p-6 h-full flex flex-col">
       <h2 className="text-2xl font-semibold text-gray-900 mb-4">Danh sách đơn hàng</h2>
-      <div className="flex flex-col items-end w-full mb-4">
-        <div className="flex gap-4 w-full max-w-6xl">
+      <div className="w-full mb-4">
+        <div className="flex flex-col lg:flex-row items-center gap-4 w-full">
           <Input
             placeholder="Tìm kiếm theo mã đơn hoặc tên người dùng..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="bg-white border-gray-300 text-gray-900 placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500"
+            className="bg-white border-gray-300 text-gray-900 placeholder-gray-400 focus:ring-blue-500 focus:border-blue-500 flex-1 min-w-[200px]"
           />
-          <Select value={statusFilter || 'all'} onValueChange={(value) => setStatusFilter(value === 'all' ? undefined : value)}>
-            <SelectTrigger className="bg-white border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500">
-              <SelectValue placeholder="Trạng thái" />
+
+          <Select
+            value={statusFilter || 'all'}
+            onValueChange={(value) => setStatusFilter(value === 'all' ? undefined : value)}
+          >
+            <SelectTrigger
+              className="bg-white border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500 min-w-[150px]">
+              <SelectValue placeholder="Trạng thái"/>
             </SelectTrigger>
             <SelectContent className="bg-white border-gray-200 text-gray-900">
-              <SelectItem value="all" className="hover:bg-gray-100">Tất cả trạng thái</SelectItem>
-              <SelectItem value="PENDING" className="hover:bg-gray-100">Đang chờ</SelectItem>
-              <SelectItem value="CONFIRMED" className="hover:bg-gray-100">Đã xác nhận</SelectItem>
-              <SelectItem value="PROCESSING" className="hover:bg-gray-100">Đang xử lý</SelectItem>
-              <SelectItem value="SHIPPED" className="hover:bg-gray-100">Đã giao</SelectItem>
-              <SelectItem value="DELIVERED" className="hover:bg-gray-100">Đã nhận</SelectItem>
-              <SelectItem value="CANCELLED" className="hover:bg-gray-100">Đã hủy</SelectItem>
+              <SelectItem value="all">Tất cả trạng thái</SelectItem>
+              <SelectItem value="PENDING">Đang chờ</SelectItem>
+              <SelectItem value="CONFIRMED">Đã xác nhận</SelectItem>
+              <SelectItem value="PROCESSING">Đang xử lý</SelectItem>
+              <SelectItem value="SHIPPED">Đã giao</SelectItem>
+              <SelectItem value="DELIVERED">Đã nhận</SelectItem>
+              <SelectItem value="CANCELLED">Đã hủy</SelectItem>
             </SelectContent>
           </Select>
+
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="outline" className="border-gray-300 text-gray-900 hover:bg-gray-100">
-                {createdFrom ? format(createdFrom, 'dd/MM/yyyy', { locale: vi }) : 'Từ ngày'}
+              <Button
+                variant="outline"
+                className="border-gray-300 text-gray-900 hover:bg-gray-100 min-w-[120px]"
+              >
+                {createdFrom ? format(createdFrom, 'dd/MM/yyyy', {locale: vi}) : 'Từ ngày'}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="bg-white border-gray-200">
@@ -123,10 +132,14 @@ export default function OrderManager() {
               />
             </PopoverContent>
           </Popover>
+
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant="outline" className="border-gray-300 text-gray-900 hover:bg-gray-100">
-                {createdTo ? format(createdTo, 'dd/MM/yyyy', { locale: vi }) : 'Đến ngày'}
+              <Button
+                variant="outline"
+                className="border-gray-300 text-gray-900 hover:bg-gray-100 min-w-[120px]"
+              >
+                {createdTo ? format(createdTo, 'dd/MM/yyyy', {locale: vi}) : 'Đến ngày'}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="bg-white border-gray-200">
@@ -139,25 +152,29 @@ export default function OrderManager() {
               />
             </PopoverContent>
           </Popover>
+
           <Select value={sortBy} onValueChange={setSortBy}>
-            <SelectTrigger className="bg-white border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500">
-              <SelectValue placeholder="Sắp xếp theo" />
+            <SelectTrigger
+              className="bg-white border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500 min-w-[140px]">
+              <SelectValue placeholder="Sắp xếp theo"/>
             </SelectTrigger>
             <SelectContent className="bg-white border-gray-200 text-gray-900">
-              <SelectItem value="CreatedAt" className="hover:bg-gray-100">Ngày tạo</SelectItem>
-              <SelectItem value="Total" className="hover:bg-gray-100">Tổng tiền</SelectItem>
+              <SelectItem value="CreatedAt">Ngày tạo</SelectItem>
+              <SelectItem value="Total">Tổng tiền</SelectItem>
             </SelectContent>
           </Select>
+
           <Button
             variant="outline"
-            className="border-gray-300 text-gray-900 hover:bg-gray-100"
+            className="border-gray-300 text-gray-900 hover:bg-gray-100 min-w-[110px] flex items-center justify-center"
             onClick={() => setSortDescending(!sortDescending)}
           >
-            <ArrowUpDown className="h-4 w-4 mr-2" />
+            <ArrowUpDown className="h-4 w-4 mr-2"/>
             {sortDescending ? 'Giảm dần' : 'Tăng dần'}
           </Button>
         </div>
       </div>
+
       {loading && <p className="text-center text-gray-500">Đang tải...</p>}
       {error && <p className="text-center text-red-500">{error}</p>}
       {!loading && !error && filteredOrders.length === 0 && (
@@ -194,7 +211,7 @@ export default function OrderManager() {
                         className="border-blue-500 text-blue-500 hover:bg-blue-50"
                         onClick={() => handleViewDetails(order)}
                       >
-                        <Eye className="h-4 w-4" />
+                        <Eye className="h-4 w-4"/>
                       </Button>
                     </TableCell>
                   </TableRow>

@@ -35,8 +35,7 @@ const orderApi = {
   async updateOrderStatus(id: string, status: string) {
     return await axios.put(
       `${orderUrl}/${id}`,
-      { status },
-      { headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` } }
+      { status }
     )
   },
 
