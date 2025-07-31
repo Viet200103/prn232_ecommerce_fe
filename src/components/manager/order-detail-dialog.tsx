@@ -43,7 +43,7 @@ export default function OrderDetailsDialog({ isOpen, onClose, order, onStatusUpd
               <div className="flex items-center gap-4">
                 <span className="text-gray-900 font-medium">Trạng thái:</span>
                 <Select value={status} onValueChange={setStatus}>
-                  <SelectTrigger className="bg-white border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500">
+                  <SelectTrigger className="bg-white border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500 max-w-4xl">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-white border-gray-200 text-gray-900">

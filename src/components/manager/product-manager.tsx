@@ -1,16 +1,17 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Pencil, Trash2 } from 'lucide-react'
-import { toast } from 'react-toastify'
-import { Product } from '@/lib/types/product.type'
+import React, {useState, useEffect} from 'react'
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from '@/components/ui/table'
+import {Button} from '@/components/ui/button'
+import {Input} from '@/components/ui/input'
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select'
+import {Pencil, Trash2} from 'lucide-react'
+import {toast} from 'react-toastify'
+import {Product} from '@/lib/types/product.type'
 import productApi from '@/lib/api/product.api'
 import categoryApi from '@/lib/api/category.api'
 import ProductForm from '@/components/manager/product-form'
+import ProductPagination from "@/components/home/product-pagination";
 
 interface ProductCategory {
   id: string
@@ -27,19 +28,23 @@ export default function ProductManager() {
   const [error, setError] = useState<string | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
+  const [pageNumber, setPageNumber] = useState(1)
+  const [pageSize] = useState(10)
+  const [totalPages, setTotalPages] = useState(1)
 
   const fetchProducts = async () => {
     setLoading(true)
     setError(null)
     try {
       const response = await productApi.getProducts({
-        pageNumber: 1,
-        pageSize: 20,
+        pageNumber: pageNumber,
+        pageSize: pageSize,
         sortBy: "newest",
         searchName: searchTerm || undefined,
         categoryId: selectedCategory === 'all' ? undefined : selectedCategory,
       })
       setProducts(response.items || [])
+      setTotalPages(response.totalPages || 1)
     } catch (err) {
       setError('Đã xảy ra lỗi khi tải sản phẩm')
     } finally {
@@ -55,11 +60,15 @@ export default function ProductManager() {
     }
   }
 
-  fetchCategories().then(() => {})
+  useEffect(() => {
+    fetchCategories().then(() => {
+    })
+  }, []);
 
   useEffect(() => {
-    fetchProducts().then(() => {})
-  }, [searchTerm, selectedCategory])
+    fetchProducts().then(() => {
+    })
+  }, [searchTerm, selectedCategory, pageNumber, pageSize])
 
   const handleDelete = async (id: string) => {
     try {
@@ -75,20 +84,12 @@ export default function ProductManager() {
   const handleSave = () => {
     setIsDialogOpen(false)
     setEditingProduct(null)
-    fetchProducts().then(() => {})
+    fetchProducts().then(() => {
+    })
   }
 
-  // Client-side filtering for instant feedback
-  const filteredProducts: Product[] = products.filter((product) => {
-    const matchesSearch =
-      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.sku.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesCategory = selectedCategory === 'all' || product.categoryId === selectedCategory
-    return matchesSearch && matchesCategory
-  })
-
   return (
-    <div className="bg-white border-gray-200 shadow-sm rounded-2xl p-6 h-full">
+    <div className="flex flex-col bg-white border-gray-200 shadow-sm rounded-2xl p-6 max-h-full h-full">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
         <h2 className="text-2xl font-semibold text-gray-900">Danh sách sản phẩm</h2>
         <div className="flex flex-col sm:flex-row gap-4 flex-1 max-w-4xl">
@@ -100,7 +101,7 @@ export default function ProductManager() {
           />
           <Select value={selectedCategory} onValueChange={setSelectedCategory}>
             <SelectTrigger className="bg-white border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500">
-              <SelectValue placeholder="Chọn danh mục" />
+              <SelectValue placeholder="Chọn danh mục"/>
             </SelectTrigger>
             <SelectContent className="bg-white border-gray-200 text-gray-900">
               <SelectItem value="all" className="hover:bg-gray-100">Tất cả danh mục</SelectItem>
@@ -122,55 +123,69 @@ export default function ProductManager() {
 
       {loading && <p className="text-center text-gray-500">Đang tải...</p>}
       {error && <p className="text-center text-red-500">{error}</p>}
-      {!loading && !error && filteredProducts.length === 0 && (
+
+      {!loading && !error && products.length > 0 && (
+        <div className="flex-1 max-h-[60vh] overflow-y-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Tên</TableHead>
+                <TableHead>Danh mục</TableHead>
+                <TableHead>SKU</TableHead>
+                <TableHead>Số lượng</TableHead>
+                <TableHead>Giá</TableHead>
+                <TableHead>Hành động</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody className={"overflow-y-auto"}>
+              {products.map((product) => (
+                <TableRow key={product.id}>
+                  <TableCell className="text-gray-900">{product.name}</TableCell>
+                  <TableCell className="text-gray-500">{product.categoryName}</TableCell>
+                  <TableCell className="text-gray-500">{product.sku}</TableCell>
+                  <TableCell className="text-gray-500">{product.quantity}</TableCell>
+                  <TableCell className="text-gray-900">{product.price.toLocaleString('vi-VN')} VNĐ</TableCell>
+                  <TableCell>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="mr-2 border-blue-500 text-blue-500 hover:bg-blue-50"
+                      onClick={() => {
+                        setEditingProduct(product)
+                        setIsDialogOpen(true)
+                      }}
+                    >
+                      <Pencil className="h-4 w-4"/>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="border-red-500 text-red-500 hover:bg-red-50"
+                      onClick={() => handleDelete(product.id)}
+                    >
+                      <Trash2 className="h-4 w-4"/>
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+
+      )}
+
+      {totalPages > 1 && (
+        <ProductPagination
+          pageNumber={pageNumber}
+          totalPages={totalPages}
+          setPageNumber={setPageNumber}
+        />
+      )}
+
+      {!loading && !error && products.length === 0 && (
         <p className="text-center text-gray-500">Không có sản phẩm nào</p>
       )}
-      {!loading && !error && filteredProducts.length > 0 && (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Tên</TableHead>
-              <TableHead>Danh mục</TableHead>
-              <TableHead>SKU</TableHead>
-              <TableHead>Số lượng</TableHead>
-              <TableHead>Giá</TableHead>
-              <TableHead>Hành động</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredProducts.map((product) => (
-              <TableRow key={product.id}>
-                <TableCell className="text-gray-900">{product.name}</TableCell>
-                <TableCell className="text-gray-500">{product.categoryName}</TableCell>
-                <TableCell className="text-gray-500">{product.sku}</TableCell>
-                <TableCell className="text-gray-500">{product.quantity}</TableCell>
-                <TableCell className="text-gray-900">{product.price.toLocaleString('vi-VN')} VNĐ</TableCell>
-                <TableCell>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="mr-2 border-blue-500 text-blue-500 hover:bg-blue-50"
-                    onClick={() => {
-                      setEditingProduct(product)
-                      setIsDialogOpen(true)
-                    }}
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="border-red-500 text-red-500 hover:bg-red-50"
-                    onClick={() => handleDelete(product.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      )}
+
       <ProductForm
         isOpen={isDialogOpen}
         onClose={() => {

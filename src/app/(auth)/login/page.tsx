@@ -12,6 +12,7 @@ import { login } from "@/lib/actions/auth.action";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {ACCESS_TOKEN} from "@/lib/contants";
+import {useAppContext} from "@/lib/app-context";
 
 const loginSchema = z.object({
   email: z.email({ message: "Địa chỉ email không hợp lệ" }).trim(),
@@ -22,6 +23,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
   const router = useRouter();
+  const {saveToken} = useAppContext()
   const [formError, setFormError] = useState<string | null>(null);
 
   const form = useForm<LoginFormValues>({
@@ -37,7 +39,7 @@ export default function LoginPage() {
     login(data.email, data.password)
       .then((result) => {
         if (result.token) {
-          localStorage.setItem(ACCESS_TOKEN, result.token);
+          saveToken(result.token);
         }
         router.push("/");
       })

@@ -22,20 +22,6 @@ export default function HomePage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // Fetch categories only once on mount
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const category = await categoryApi.getCategories()
-        setCategories(category)
-      } catch {
-        setError('Không thể tải danh mục sản phẩm')
-      }
-    }
-
-    fetchCategories()
-  }, [])
-
   // Fetch products whenever filters or pagination change
   useEffect(() => {
     const fetchProducts = async () => {

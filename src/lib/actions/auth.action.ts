@@ -2,6 +2,7 @@
 
 import {cookies} from "next/headers";
 import {ACCESS_TOKEN} from "@/lib/contants";
+import {LoginResponse, RegisterResponse} from "@/lib/types/auth.type";
 
 export async function login(email: string, password: string): Promise<LoginResponse> {
 

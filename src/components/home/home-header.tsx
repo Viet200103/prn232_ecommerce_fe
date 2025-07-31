@@ -6,7 +6,8 @@ import { ShoppingCart } from 'lucide-react'
 import { useAppContext } from '@/lib/app-context'
 
 export default function HomeHeader() {
-  const { isAuthenticated, logout } = useAppContext()
+  const { isAuthenticated, user, logout } = useAppContext()
+  const isManager = user?.role === "Manager"
 
   const handleLogout = () => {
     logout()
@@ -16,14 +17,24 @@ export default function HomeHeader() {
     <nav className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
       <h1 className="text-3xl font-bold text-gray-900">Sản phẩm</h1>
       <div className="flex items-center gap-4">
-        <Link href="/cart" className="flex items-center text-gray-600 hover:text-blue-500">
-          <ShoppingCart className="h-6 w-6 mr-2" />
-          <span>Giỏ hàng (0)</span>
-        </Link>
+        {!isManager && (
+          <Link href="/cart" className="flex items-center text-gray-600 hover:text-blue-500">
+            <ShoppingCart className="h-6 w-6 mr-2" />
+            <span>Giỏ hàng (0)</span>
+          </Link>
+        )}
+        {isManager && (
+          <Button
+            className="bg-blue-500 hover:bg-blue-600 text-white"
+          >
+            <Link href={"/manager/products"}>Bảng điều khiển</Link>
+          </Button>
+        )}
         {isAuthenticated ? (
           <Button
+            variant="outline"
             onClick={handleLogout}
-            className="bg-blue-500 hover:bg-blue-600 text-white"
+            className="border-blue-500 text-blue-500 hover:bg-blue-50"
           >
             Đăng xuất
           </Button>

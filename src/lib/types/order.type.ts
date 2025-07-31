@@ -3,10 +3,19 @@ export interface Order {
   id: string
   userId: string
   userName: string
-  status: string // e.g., "Pending", "Processing", "Shipped", "Delivered", "Cancelled"
+  status: string
   total: number
-  items: { id: string; productId: string; quantity: number; unitPrice: number }[]
-  paymentId: string
+  items: { id: string; orderId: string; productId: string; quantity: number; unitPrice: number; total: number }[]
+  paymentId: string | null
   createdAt: string
-  updatedAt: string
+  updatedAt: string | null
+}
+
+export interface OrderResponse {
+  orders: Order[]
+  totalCount: number
+  pageNumber: number
+  pageSize: number
+  hasNextPage: boolean
+  hasPreviousPage: boolean
 }
