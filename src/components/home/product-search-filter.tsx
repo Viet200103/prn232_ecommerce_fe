@@ -37,7 +37,7 @@ export default function SearchFilter(
         <SelectTrigger className="bg-white border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500">
           <SelectValue placeholder="Chọn danh mục"/>
         </SelectTrigger>
-        <SelectContent className="bg-white border-gray-300 text-gray-900">
+        <SelectContent className="bg-white border-gray-300 text-gray-900 max-h-96">
           <SelectItem value="all" className="hover:bg-gray-100">Tất cả danh mục</SelectItem>
           {categories.map((category) => (
             <SelectItem key={category.id} value={category.id} className="hover:bg-gray-100">

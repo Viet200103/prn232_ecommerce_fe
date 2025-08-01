@@ -19,11 +19,10 @@ class AxiosInstance {
 
     this.api.interceptors.request.use(
       (config) => {
-        // const token = typeof window !== "undefined"
-        //   ? localStorage.getItem(ACCESS_TOKEN)
-        //   : null;
+        const token = typeof window !== "undefined"
+          ? localStorage.getItem(ACCESS_TOKEN)
+          : null;
 
-        const  token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ1c2VyM0BleGFtcGxlLmNvbSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6Ik1hbmFnZXIiLCJleHAiOjE3ODU0NjIwNTksImlzcyI6IkFzc2lnbm1lbnQiLCJhdWQiOiJBc3NpZ25tZW50In0.pbxnpgk1qL-pbj0L5vfe84u51aWHdrL_Cn3wbkF7rl4"
         if (token && config.headers) {
           config.headers.Authorization = `Bearer ${token}`;
         }

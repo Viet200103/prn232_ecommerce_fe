@@ -20,6 +20,11 @@ export interface OrderResponse {
   hasPreviousPage: boolean
 }
 
+export interface PaymentResponse {
+  paymentUrl: string,
+  orderCode: string
+}
+
 export const ORDER_STATUS: Record<string, string>= {
   "PENDING": 'Đang chờ',
   "CONFIRMED": 'Đã xác nhận',

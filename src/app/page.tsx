@@ -9,6 +9,8 @@ import HomeHeader from "@/components/home/home-header"
 import ProductList from "@/components/home/product-list"
 import Pagination from "@/components/ui/pagination"
 import { Product, ProductCategory } from "@/lib/types/product.type"
+import CartDetailsSheet from "@/components/home/cart-details-sheet";
+import {Cart} from "@/lib/types/cart.type";
 
 export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([])
@@ -22,6 +24,21 @@ export default function HomePage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const fetchCategories = async () => {
+    try {
+      const data = await categoryApi.getCategories({
+        pageNumber: 1,
+        pageSize: 100
+      })
+      setCategories(data.items || [])
+    } catch (err) {
+      console.error('Fetch categories', err)
+    }
+  }
+
+  useEffect(() => {
+    fetchCategories().then(() => {})
+  }, []);
   // Fetch products whenever filters or pagination change
   useEffect(() => {
     const fetchProducts = async () => {
