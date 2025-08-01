@@ -1,0 +1,13 @@
+
+services:
+  ecommerce-web:
+#    image: registry.gitlab.com/viettl200103/colabnity-frontend/web-app-dev:v1
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ecommerce_web_app
+    ports:
+      - "3000:3000"
+    command: npm run start
+    networks:
+      - prn232_project_ecommerce-network
